@@ -21,9 +21,12 @@ int main(int argc, char *argv[])
 	{
 		//LinearSystem equations1("-A +2B    +3C = 4 ; 5A + 6.68B-7C=10;-11A+0.5B-3.79C=-0.234;");
 		LinearSystem *equations1 = new LinearSystem("3x+2y-3z=-13 ; -3y+4x+6z=7; -z+x=-5    ");
+		std::cout << "The system of equations to solve is:\n\n";
+		equations1->displayEquations(); 
 		equations1->Solve();
 		//equations1.displayEquations();
 		//equations1.displayMatrix(); 
+		std::cout << "\nThe solutions are:\n\n";
 		equations1->displayResults(); 
 		std::cout << std::endl;
 		delete equations1; 

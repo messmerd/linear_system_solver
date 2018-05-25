@@ -294,14 +294,8 @@ int LinearSystem::reduceMatrix()  // n by n+1 matrix
 			m[i][col] *= mult_amount; 
 		}
 
-		std::cout << "Before leading one:\n";
-		displayMatrix();
-
 		/// Set all other rows to 0 using elementary row operations:
 		leadingOneForm(i);
-
-		std::cout << "After leading one:\n";
-		displayMatrix();
 	}
 
 	return 1; 
