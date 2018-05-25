@@ -69,9 +69,16 @@ void LinearSystem::Solve(std::string equations)
 // Prints the equations 
 void LinearSystem::displayEquations()
 {
-	for (int i = 0; i < num_eqs; i++)
+	if (valid_equations)
 	{
-		std::cout << eq[i] << std::endl; 
+		for (int i = 0; i < num_eqs; i++)
+		{
+			std::cout << eq[i] << std::endl; 
+		}
+	}
+	else
+	{
+		std::cout << "Your equations are invalid.\n";
 	}
 }
 
@@ -90,20 +97,32 @@ void LinearSystem::displayMatrix()
 		std::cout << "\n";
 		}
 	}
+	else
+	{
+		std::cout << "Your equations are invalid or you still need to execute the Solve method.\n";
+	}
 }
 
 // Prints the values of each variable 
 void LinearSystem::displayResults()
 {
-	for (auto var : vars)
+	if (valid_equations)
 	{
-		std::cout << var << " = " << values[var] << "\n";
+		for (auto var : vars)
+		{
+			std::cout << var << " = " << values[var] << "\n";
+		}
+	}
+	else
+	{
+		std::cout << "Your equations are invalid or you still need to execute the Solve method.\n";
 	}
 }
 
 // Parses the equations from a string of equations 
 void LinearSystem::parseEquations(std::string e)
 {
+	num_eqs = 0; 
 	for (int i = 0; i < e.length(); i++)
 	{
 		if (e[i]=='=')  // The number of equations 
@@ -115,6 +134,13 @@ void LinearSystem::parseEquations(std::string e)
 		{
 			vars.insert(e[i]);
 		}
+	}
+
+	if (num_eqs == 0)
+	{
+		std::cout << "You did not enter valid equations. \n";
+		valid_equations = false;
+		return; 
 	}
 
 	eq = new std::string[num_eqs];
@@ -131,12 +157,16 @@ void LinearSystem::parseEquations(std::string e)
 	int start = 0; 
 	for (int i=0; i<e.length(); i++)
 	{	
-		if (e[i]==';' || i == e.length() - 1) 
+		if (e[i]==';') 
 		{
 			parseEquation(e.substr(start, i - start), eqon);
 			start = i + 1; 
 			if (eqon == num_eqs - 1) {break; }
 			eqon++;
+		}
+		else if (i == e.length() - 1)
+		{
+			parseEquation(e.substr(start, i - start + 1), eqon);
 		}
 
 		if (e[i] != ' ' && e[i] != ';')
@@ -148,7 +178,7 @@ void LinearSystem::parseEquations(std::string e)
 
 	if (vars.size() > num_eqs)
 	{
-		std::cout << "There are more variables then equations, so this is unsolvable. \n";
+		std::cout << "There are more variables then equations, so there is an infinite number of answers. \n"; 
 		valid_equations = false;
 		return; 
 	}
@@ -238,7 +268,7 @@ int LinearSystem::reduceMatrix()  // n by n+1 matrix
 	for (int i = 0; i < num_eqs; i++)  // y value (and also x)
 	{
 		/// Make current row be the one with the greatest absolute value in the current column
-		int max_row = 0; 
+		int max_row = i; 
 		for (int i2 = i; i2 < num_eqs; i2++) // see what row has greatest term at current column (i)
 		{
 			if (m[i2][i]*m[i2][i] > m[max_row][i]*m[max_row][i])
@@ -264,8 +294,14 @@ int LinearSystem::reduceMatrix()  // n by n+1 matrix
 			m[i][col] *= mult_amount; 
 		}
 
+		std::cout << "Before leading one:\n";
+		displayMatrix();
+
 		/// Set all other rows to 0 using elementary row operations:
 		leadingOneForm(i);
+
+		std::cout << "After leading one:\n";
+		displayMatrix();
 	}
 
 	return 1; 
